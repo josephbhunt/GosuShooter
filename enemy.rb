@@ -5,7 +5,7 @@ class Enemy
   include Collidable
   include GameConstants
 
-  attr_accessor :dead
+  attr_accessor :dead, :x, :y
 
   MOVE_INCREMENT = 3
   POINTS = 10
@@ -19,6 +19,18 @@ class Enemy
 
   def move_down
     @y += MOVE_INCREMENT
+  end
+
+  def move_left
+    @x -= MOVE_INCREMENT
+  end
+
+  def move_right
+    @x += MOVE_INCREMENT
+  end
+
+  def track(x, y)
+    (x > @x) ? move_right : move_left
   end
 
   def draw

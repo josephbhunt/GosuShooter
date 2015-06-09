@@ -7,7 +7,7 @@ class Player
   include GameConstants
   include Collidable
 
-  attr_accessor :shots, :score
+  attr_accessor :shots, :score, :x, :y, :stars
 
   MOVE_INCREMENT = 5
 
@@ -20,6 +20,7 @@ class Player
     @shots = []
     @dead = false
     @score = 0
+    @stars = 0
   end
 
   def move_left
@@ -60,12 +61,18 @@ class Player
   end
 
   def draw
-    @image.draw_rot(@x, @y, 1, @angle)
-    @shots.each(&:move_up).each(&:draw)
+    if live?
+      @image.draw_rot(@x, @y, 1, @angle)
+      @shots.each(&:move_up).each(&:draw)
+    end
   end
 
   def add_to_score(points)
     @score += points
+  end
+
+  def collect_star
+    @stars += 1
   end
 
 end
