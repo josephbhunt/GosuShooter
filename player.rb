@@ -58,6 +58,7 @@ class Player
 
   def stop_shot(s)
     @shots.delete(s)
+    s.die
   end
 
   def draw
@@ -73,6 +74,12 @@ class Player
 
   def collect_star
     @stars += 1
+  end
+
+  # Override
+  def die
+    @dead = true
+    shots.each(&:die)
   end
 
 end
