@@ -7,7 +7,7 @@ class Player
   include GameConstants
   include Collidable
 
-  attr_accessor :shots, :score, :x, :y, :stars
+  attr_accessor :score, :x, :y, :stars
 
   MOVE_INCREMENT = 5
 
@@ -17,7 +17,6 @@ class Player
     @x = x
     @y = y
     @vel_x = @vel_y = @angle = 0.0
-    @shots = []
     @dead = false
     @score = 0
     @stars = 0
@@ -46,25 +45,19 @@ class Player
   def shoot
     if (Time.now.to_f - @last_shot) > Shot::DELAY
       shot_y = @y - (@image.height / 2)
-      @shots << Shot.new(@x, shot_y)
+      Shot.new(@x, shot_y, self)
       @last_shot = Time.now.to_f
     end
   end
 
   def shoot_stream
     shot_y = @y - (@image.height / 2)
-    @shots << ShotStream.new(@x, shot_y)
-  end
-
-  def stop_shot(s)
-    @shots.delete(s)
-    s.die
+    ShotStream.new(@x, shot_y, self)
   end
 
   def draw
     if live?
       @image.draw_rot(@x, @y, 1, @angle)
-      @shots.each(&:move_up).each(&:draw)
     end
   end
 
@@ -79,7 +72,6 @@ class Player
   # Override
   def die
     @dead = true
-    shots.each(&:die)
   end
 
 end

@@ -41,18 +41,18 @@ class MyWindow < Gosu::Window
 
     @enemy_gen.enemies.each(&:move_down)
     @enemy_gen.enemies.each do |e|
-      @player.shots.each do |s|
+      Shot.all.each do |s|
         if e.live? && e.collided_with?(s)
           e.die 
           @explosions << Explosion.new(e.x, e.y)
           @items << Item.new(e.x, e.y)  if rand(10) == 1
-          @player.stop_shot(s)
+          s.die
           @player.add_to_score(e.points)
         end
-        @player.stop_shot(s)  if s.off_screen?
       end
       e.die  if e.off_screen?
     end
+    Shot.update_all
     @enemy_gen.track_player(@player.x, @player.y)
     @enemy_gen.clean_up
 
@@ -66,6 +66,7 @@ class MyWindow < Gosu::Window
 
   def draw
     @background_image.draw(0, 0, 0)
+    Shot.draw_all
     @player.draw
     @enemy_gen.draw
     @explosions.each(&:draw)

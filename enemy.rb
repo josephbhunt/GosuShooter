@@ -12,7 +12,6 @@ class Enemy
 
   def initialize(x, y)
     @x, @y = x, y
-    @angle = 0
     @image = Gosu::Image.new("enemy.png")
     @dead = false
   end
@@ -34,7 +33,7 @@ class Enemy
   end
 
   def draw
-    @image.draw_rot(@x, @y, 1, @angle)  if live?
+    @image.draw(@x, @y, 1)  if live?
   end
 
   def off_screen?

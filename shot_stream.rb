@@ -4,14 +4,15 @@ class ShotStream < Shot
   WIDTH = 4
   HEIGHT = 6
 
-  def initialize(x, y)
-    super
+  def initialize(x, y, shooter)
+    super(x, y, shooter)
     @x -= WIDTH
     @y += HEIGHT
     @x_org = @x
     @float_right = true
   end
 
+  # Override
   def draw
     float_stream
     Gosu.draw_rect(@x, @y, WIDTH, HEIGHT, Gosu::Color::WHITE, 1)
