@@ -22,6 +22,15 @@ class Player
     @stars = 0
   end
 
+  def update
+    move_left       if Gosu::button_down?(Gosu::KbLeft)
+    move_right      if Gosu::button_down?(Gosu::KbRight)
+    move_up         if Gosu::button_down?(Gosu::KbUp)
+    move_down       if Gosu::button_down?(Gosu::KbDown)
+    shoot           if Gosu::button_down?(Gosu::KbS)
+    shoot_stream    if Gosu::button_down?(Gosu::KbA)
+  end
+
   def move_left
     @x -= MOVE_INCREMENT
     @x %= WINDOW_WIDTH

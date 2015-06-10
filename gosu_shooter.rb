@@ -27,12 +27,7 @@ class MyWindow < Gosu::Window
 
   def update
     close  if Gosu::button_down?(Gosu::KbEscape)
-    @player.move_left  if Gosu::button_down?(Gosu::KbLeft)
-    @player.move_right  if Gosu::button_down?(Gosu::KbRight)
-    @player.move_up  if Gosu::button_down?(Gosu::KbUp)
-    @player.move_down  if Gosu::button_down?(Gosu::KbDown)
-    @player_shot = @player.shoot  if Gosu::button_down?(Gosu::KbS)
-    @player_shot = @player.shoot_stream  if Gosu::button_down?(Gosu::KbA)
+    @player.update  if @player.live?
     
     if @enemy_gen.enemies.any?{|e| e.collided_with?(@player)}
       @player.die
