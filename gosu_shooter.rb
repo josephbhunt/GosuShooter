@@ -25,6 +25,9 @@ class MyWindow < Gosu::Window
     @enemy_gen = EnemyGenerator.new
     @explosions = []
     @items = []
+
+    @song = Gosu::Song.new(SONG_SOUND_FILE)
+    @song.play
   end
 
   def update

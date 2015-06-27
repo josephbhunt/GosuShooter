@@ -8,4 +8,5 @@ module GameConstants
   ITEM_IMAGE_FILE = "img/item.png"
   SHOT_IMAGE_FILE = "img/shot.png"
   EXPLOSION_IMAGE_FILE = "img/explosion.png"
+  SONG_SOUND_FILE = "sound/contra_song.wav"
 end
