@@ -84,8 +84,8 @@ class Background
   SCROLL_RATE = 1
 
   def initialize
-    @bg_image = BackgroundImage.new(Gosu::Image.new("bg_blue.jpg"))
-    @bg_image_2 = BackgroundImage.new(Gosu::Image.new("bg_blue.jpg"), 0, -WINDOW_HEIGHT)
+    @bg_image = BackgroundImage.new(Gosu::Image.new(BACKGROUND_IMAGE_FILE))
+    @bg_image_2 = BackgroundImage.new(Gosu::Image.new(BACKGROUND_IMAGE_FILE), 0, -WINDOW_HEIGHT)
   end
 
   def update

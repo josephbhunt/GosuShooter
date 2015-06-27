@@ -12,7 +12,7 @@ class Enemy
 
   def initialize(x, y)
     @x, @y = x, y
-    @image = Gosu::Image.new("enemy.png")
+    @image = Gosu::Image.new(ENEMY_IMAGE_FILE)
     @dead = false
   end
 

@@ -13,7 +13,7 @@ class Player
 
   def initialize(x=0, y=0)
     @last_shot = Time.now.to_f
-    @image = Gosu::Image.new("spaceship1.png")
+    @image = Gosu::Image.new(PLAYER_IMAGE_FILE)
     @x = x
     @y = y
     @vel_x = @vel_y = @angle = 0.0

@@ -1,10 +1,11 @@
 class Explosion
+  include GameConstants
   ANIMATION_SPEED = 75
 
   def initialize(x, y, offset=25)
     @x, @y = (x - offset), (y - offset)
     @frame_start_time = Gosu::milliseconds
-    @explosion = Gosu::Image.load_tiles("explosion.png", 65, 65)
+    @explosion = Gosu::Image.load_tiles(EXPLOSION_IMAGE_FILE, 65, 65)
     @explosion_tile_index = 0
   end
 

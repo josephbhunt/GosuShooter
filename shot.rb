@@ -1,5 +1,6 @@
 class Shot
   include Collidable
+  include GameConstants
 
   MOVE_INCREMENT = 5
   DELAY = 0.2
@@ -39,7 +40,7 @@ class Shot
 
   def initialize(x, y, shooter)
     @x, @y, @shooter = x, y, shooter
-    @image = Gosu::Image.new("shot.png")
+    @image = Gosu::Image.new(SHOT_IMAGE_FILE)
     @dead = false
     @@shots << self
   end
