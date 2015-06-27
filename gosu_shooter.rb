@@ -81,31 +81,78 @@ end
 
 class Background
   include GameConstants
-  SCROLL_RATE = 0.5
-
-  TILE_SIZE = 90
+  SCROLL_RATE = 1
 
   def initialize
-    @background_images = Gosu::Image.load_tiles("bg_blue.jpg", TILE_SIZE, TILE_SIZE, tileable: true)
-    @bg_grid = Array.new(WINDOW_WIDTH / TILE_SIZE) {Array.new(WINDOW_HEIGHT / TILE_SIZE + 1)}
-    @bg_grid.each_with_index do |row, x|
+    @bg_image = BackgroundImage.new(Gosu::Image.new("bg_blue.jpg"))
+    @bg_image_2 = BackgroundImage.new(Gosu::Image.new("bg_blue.jpg"), 0, -WINDOW_HEIGHT)
+  end
+
+  def update
+    @bg_image.move_down(SCROLL_RATE)
+    @bg_image_2.move_down(SCROLL_RATE)
+    @bg_image.move_to_top  if @bg_image.y > @bg_image.image.height
+    @bg_image_2.move_to_top  if @bg_image_2.y > @bg_image_2.image.height
+  end
+
+  def draw
+    @bg_image.draw
+    @bg_image_2.draw
+  end
+end
+
+class BackgroundImage
+  include GameConstants
+
+  attr_accessor :image, :x, :y
+
+  def initialize(image, x=0, y=0)
+    @x, @y, @image = x, y, image
+  end
+
+  def move_down(rate=1)
+    @y += rate
+  end
+
+  def move_to_top
+    @y = -@image.height
+  end
+
+  def draw
+    image.draw(@x, @y, 0)
+  end
+end
+
+class Grid
+  include GameConstants
+
+  attr_accessor :tiles, :map
+
+  def initialize(ordered_images)
+    @tiles = ordered_images.map{|oi| GridTile.new(oi)}
+    @grid_height = WINDOW_HEIGHT / TILE_SIZE + 2
+    @map = Array.new(WINDOW_WIDTH / TILE_SIZE) {Array.new(WINDOW_HEIGHT / TILE_SIZE + 2)}
+    
+    @map.each_with_index do |row, x|
       row.each_with_index do |col, y|
-        image_x = x * TILE_SIZE
-        image_y = y * TILE_SIZE
-        y_multiplyer = WINDOW_WIDTH / TILE_SIZE
-        gt_image = @background_images[y * y_multiplyer + x]
-        grid_tile = GridTile.new(x, y - TILE_SIZE, image_x, image_y, gt_image)
-        @bg_grid[x][y] = grid_tile
+        if y == 0
+        elsif y > 0 && y < @grid_height - 2
+          image_x = x * TILE_SIZE
+          image_y = y * TILE_SIZE
+          y_multiplyer = WINDOW_WIDTH / TILE_SIZE
+          grid_tile = @tiles[(y * y_multiplyer + x)]
+          grid_tile.set_grid_location(x, y - TILE_SIZE) 
+          grid_tile.set_image_location(image_x, image_y)
+          @map[x][y] = grid_tile
+        else
+
+        end
       end
     end
   end
 
-  def update
-    @bg_grid.each{|bg_row| bg_row.each{|t| t.move_down(SCROLL_RATE)}}
-  end
-
   def draw
-    @bg_grid.each {|t_row| t_row.each {|t| t.draw  unless t.nil? }}
+    map.each {|t_row| t_row.each {|t| t.draw  unless t.nil? }}
   end
 end
 
@@ -113,8 +160,16 @@ class GridTile
 
   attr_accessor :grid_x, :grid_y, :image_x, :image_y, :image
 
-  def initialize(grid_x, grid_y, image_x, image_y, image=nil)
+  def initialize(image, grid_x=nil, grid_y=nil, image_x=nil, image_y=nil)
     @grid_x, @grid_y, @image_x, @image_y, @image = grid_x, grid_y, image_x, image_y, image
+  end
+
+  def set_grid_location(x, y)
+    @grid_x, @grid_y = x, y
+  end
+
+  def set_image_location(x, y)
+    @image_x, @image_y = x, y
   end
 
   def move_down(rate=1)
