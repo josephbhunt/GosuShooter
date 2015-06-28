@@ -13,7 +13,7 @@ class MyWindow < Gosu::Window
   include GameConstants
 
   def initialize
-    super(WINDOW_WIDTH, WINDOW_HEIGHT)
+    super(WINDOW_WIDTH, WINDOW_HEIGHT, fullscreen: false, update_interval: 10 )
     self.caption = 'Space Shooter'
 
     @font = Gosu::Font.new(20)
@@ -31,6 +31,7 @@ class MyWindow < Gosu::Window
   end
 
   def update
+    @song.play  unless @song.playing?
     @background.update
     close  if Gosu::button_down?(Gosu::KbEscape)
     @player.update  if @player.live?
