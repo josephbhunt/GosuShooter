@@ -32,6 +32,10 @@ class Shot
     shots.each(&:move_up)
   end
 
+  def self.kill_all
+    shots.each(&:die)
+  end
+
   def self.draw_all
     shots.each(&:draw)
   end

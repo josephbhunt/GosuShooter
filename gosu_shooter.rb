@@ -9,32 +9,57 @@ require "./enemies_generator"
 require "./item"
 require 'ap'
 require "./background"
+require "./main_menu"
 
-class MyWindow < Gosu::Window
+class GameWindow < Gosu::Window
   include GameConstants
 
   def initialize
     super(WINDOW_WIDTH, WINDOW_HEIGHT, fullscreen: false, update_interval: 10 )
     self.caption = 'Space Shooter'
+    @game = Game.new
+    @menu = MainMenu.new(@game, self)
+  end
 
-    @font = Gosu::Font.new(20)
+  def update
+    close  if Gosu::button_down?(Gosu::KbEscape)
+    @menu.update  unless @game.playing?
+    @game.update  if @game.playing?
+    if @game.end_game
+      @game = Game.new
+      @menu = MainMenu.new(@game, self)
+    end
+  end
+
+  def draw
+    @menu.draw  unless @game.playing?
+    @game.draw  if @game.playing? && !@game.end_game
+  end
+end
+
+class Game
+  include GameConstants
+
+  attr_reader :game_over, :end_game, :playing
+
+  def initialize
     @background = Background.new
-
+    @song = Gosu::Song.new(SONG_SOUND_FILE)
+    @hud_font = Gosu::Font.new(20)
+    @game_over_font = Gosu::Font.new(30)
     player_start_x = WINDOW_WIDTH / 2
     player_start_y = WINDOW_HEIGHT - 80
     @player = Player.new(player_start_x, player_start_y)
     @enemy_gen = EnemyGenerator.new
     @explosions = []
     @items = []
-
-    @song = Gosu::Song.new(SONG_SOUND_FILE)
-    @song.play
+    @time_since_game_over = nil
+    @end_game = false
+    @playing = false
   end
 
   def update
-    @song.play  unless @song.playing?
     @background.update
-    close  if Gosu::button_down?(Gosu::KbEscape)
     @player.update  if @player.live?
     
     if @enemy_gen.enemies.any?{|e| e.collided_with?(@player)}
@@ -68,21 +93,45 @@ class MyWindow < Gosu::Window
   end
 
   def draw
+    @song.play  unless @song.playing?
     @background.draw
     Shot.draw_all
     @player.draw
     @enemy_gen.draw
     @explosions.each(&:draw)
     @items.each(&:draw)
-    @font.draw("Score: #{@player.score}", 10, 10, 2, 1.0, 1.0, 0xff_ffff00)
-    @font.draw("Stars: #{@player.stars}", 30, 30, 2, 1.0, 1.0, 0xff_ffff00)
+    @hud_font.draw("Score: #{@player.score}", 10, 10, 2, 1.0, 1.0, 0xff_ffff00)
+    @hud_font.draw("Stars: #{@player.stars}", 30, 30, 2, 1.0, 1.0, 0xff_ffff00)
     game_over  if @player.dead?
   end
 
   def game_over
-    @font.draw("GAME OVER!", (WINDOW_WIDTH / 2.5), (WINDOW_HEIGHT / 2), 2, 2.0, 2.0, 0xff_ffff00)
+    if @time_since_game_over.nil?
+      @time_since_game_over = Time.now.to_f
+      @game_over_font.draw_rel("GAME OVER!", (WINDOW_WIDTH / 2), (WINDOW_HEIGHT / 2), 2, 0.5, 0.5, 1, 1, 0xff_ffff00)
+    elsif !@time_since_game_over.nil? && (Time.now.to_f - @time_since_game_over) < 3
+      @game_over_font.draw_rel("GAME OVER!", (WINDOW_WIDTH / 2), (WINDOW_HEIGHT / 2), 2, 0.5, 0.5, 1, 1, 0xff_ffff00)
+    elsif !@time_since_game_over.nil? && (Time.now.to_f - @time_since_game_over) > 3
+      close_game
+    end
+  end
+
+  def play
+    @playing = true
+  end
+
+  def playing?
+    @playing
+  end
+
+  def close_game
+    @playing = false
+    @song.stop
+    @enemy_gen.kill_all
+    Shot.kill_all
+    @end_game = true
   end
 end
 
-window = MyWindow.new
+window = GameWindow.new
 window.show

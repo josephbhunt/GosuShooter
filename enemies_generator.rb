@@ -20,6 +20,10 @@ class EnemyGenerator
     @enemies.each{|e| e.track(x, y)}
   end
 
+  def kill_all
+    enemies.each(&:die)
+  end
+
   def draw
     if @enemies.any?
       @enemies.each(&:draw)
