@@ -14,8 +14,8 @@ class ShotStream < Shot
 
   # Override
   def draw
-    float_stream
     Gosu.draw_rect(@x, @y, WIDTH, HEIGHT, Gosu::Color::WHITE, 1)
+    float_stream
   end
 
   def float_stream

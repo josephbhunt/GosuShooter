@@ -22,6 +22,18 @@ class Player
     @stars = 0
   end
 
+  def width
+    @image.width
+  end
+
+  def x_center
+    @x + @image.width / 2
+  end
+
+  def y_center
+    @y + @image.height / 2
+  end
+
   def update
     move_left       if Gosu::button_down?(Gosu::KbLeft)
     move_right      if Gosu::button_down?(Gosu::KbRight)
